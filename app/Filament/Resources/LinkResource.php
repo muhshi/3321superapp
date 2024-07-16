@@ -35,11 +35,9 @@ class LinkResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('title')
                     ->required(),
-                Forms\Components\TextInput::make('description')
-                    ->required(),
+                Forms\Components\TextInput::make('description'),
                 Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->required(),
+                    ->image(),
             ]);
     }
 
