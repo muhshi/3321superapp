@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
-                <a href="/portal" class="btn-get-started">Go to Admin</a>
+                <a href="/admin" class="btn-get-started">Go to Admin</a>
             </div>
 
             <div class="row gy-4 mt-5">

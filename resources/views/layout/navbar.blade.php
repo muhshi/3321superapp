@@ -13,4 +13,4 @@
     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
 </nav>
 
-<a class="btn-getstarted" href="/portal">Go to Admin</a>
+<a class="btn-getstarted" href="/admin">Go to Admin</a>
