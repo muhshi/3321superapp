@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Saade\FilamentFullCalendar\Actions\CreateAction;
 use Saade\FilamentFullCalendar\Actions\DeleteAction;
 use Saade\FilamentFullCalendar\Actions\EditAction;
@@ -24,13 +25,32 @@ class TaskWidget extends FullCalendarWidget
 
     public function fetchEvents(array $fetchInfo): array
     {
-        return Task::query()
+        if (Auth::user()->roles[0]->name != 'super_admin') {
+            return
+                Task::query()
+                ->where('starts_at', '>=', $fetchInfo['start'])
+                ->where('ends_at', '<=', $fetchInfo['end'])
+                ->where('user_id', Auth::user()->id)
+                ->get()
+                ->map(
+                    fn(Task $task) => [
+                        'id' => $task->id,
+                        'user_id' => $task->user_id,
+                        'color' => $task->color,
+                        'title' => $task->title,
+                        'start' => $task->starts_at,
+                        'end' => $task->ends_at,
+                    ]
+                )
+                ->all();
+        }
+        return
+            Task::query()
             ->where('starts_at', '>=', $fetchInfo['start'])
             ->where('ends_at', '<=', $fetchInfo['end'])
-            ->where('user_id', auth()->id())
             ->get()
             ->map(
-                fn (Task $task) => [
+                fn(Task $task) => [
                     'id' => $task->id,
                     'user_id' => $task->user_id,
                     'color' => $task->color,
@@ -46,7 +66,7 @@ class TaskWidget extends FullCalendarWidget
     {
         return [
             Hidden::make('user_id')
-                ->default(auth()->id()),
+                ->default(Auth::user()->id),
             TextInput::make('title')
                 ->label('Pekerjaan Hari Ini')
                 ->required(),
@@ -77,7 +97,7 @@ class TaskWidget extends FullCalendarWidget
                 ->mountUsing(
                     function (Form $form, array $arguments) {
                         $form->fill([
-                            'user_id' => auth()->id(),
+                            'user_id' => Auth::user()->id,
                             'starts_at' => $arguments['start'] ?? null,
                             'ends_at' => $arguments['end'] ?? null,
                         ]);
@@ -87,7 +107,7 @@ class TaskWidget extends FullCalendarWidget
                 ->mountUsing(
                     function (Task $record, Form $form, array $arguments) {
                         $form->fill([
-                            'user_id' => auth()->id(),
+                            'user_id' => Auth::user()->id,
                             'title' => $record->title,
                             'color' => $record->color,
                             'starts_at' => $arguments['event']['start'] ?? $record->starts_at,
@@ -103,7 +123,7 @@ class TaskWidget extends FullCalendarWidget
     {
         return ViewAction::make()
             ->modalFooterActions(
-                fn (ViewAction $action) => [
+                fn(ViewAction $action) => [
                     EditAction::make(),
                     DeleteAction::make(),
                     $action->getModalCancelAction()

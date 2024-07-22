@@ -63,7 +63,7 @@ class LinkPolicy
      */
     public function forceDelete(User $user, Link $link): bool
     {
-        return $user->can('force_delete_link');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class LinkPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_link');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class LinkPolicy
      */
     public function restore(User $user, Link $link): bool
     {
-        return $user->can('restore_link');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class LinkPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_link');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class LinkPolicy
      */
     public function replicate(User $user, Link $link): bool
     {
-        return $user->can('replicate_link');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class LinkPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_link');
+        return $user->can('{{ Reorder }}');
     }
 }

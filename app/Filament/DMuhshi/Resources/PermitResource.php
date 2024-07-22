@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class PermitResource extends Resource
 {
@@ -26,7 +27,7 @@ class PermitResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Hidden::make('user_id')
-                    ->default(auth()->id())
+                    ->default(Auth::user()->id)
                     ->required(),
                 Forms\Components\TextInput::make('keperluan')
                     ->required(),
@@ -46,6 +47,12 @@ class PermitResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                //if(Auth::user()->hasRole('Doctor')) -> pakai ini bisa tapi terdeteksi error sama intelephense
+                if (Auth::user()->roles[0]->name != 'super_admin') {
+                    $query->where('user_id', Auth::user()->id);
+                }
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
